@@ -6,16 +6,19 @@ import logging
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 
+# log filename for when the script is run
 log_filename = f"logs/amplitude_extract_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
 
+# configuration of the logs
 logging.basicConfig(
-    filemode = "a",
-    level=logging.INFO, 
+    filemode = "a", # append the data when script is run and not overwrite
+    level=logging.INFO, # record any message that is INFO, WARNING, ERROR, or CRITICAL
     format='%(asctime)s - %(levelname)s - %(message)s',
     filename=log_filename
 )
 
-logger = logging.getLogger()
+# variable for writing out logs
+logger = logging.getLogger() 
 
 # loading the environment that contains our API Keys
 load_dotenv()
@@ -43,20 +46,30 @@ params = {
 # API url and endpoint
 url = 'https://analytics.eu.amplitude.com/api/2/export'
 
+# variable for the data file name
+data_name = 'amplitude_data'
+
 # calling the API
 response = requests.get(url, params=params, auth=(AMP_API_KEY, AMP_SECRET_KEY))
 logger.info(f"API Call Response Code: '{response.status_code}'")
 
 if response.status_code == 200: # if we get a 200 response (good) then save the data as a zip file
     data = response.content
-    print("Data retrieved successfully.")
     logger.info("Data retrieved successfully.")
-    logger.info("Saving data to data.zip")
-    with open('amplitude_data.zip', 'wb') as file:
+    logger.info(f"Saving data to {data_name}.zip")
+    print("Data retrieved successfully.")
+    print(f"Saving data to {data_name}.zip")
+    with open(f"{data_name}.zip", 'wb') as file:
         file.write(data)
-    logger.info("Data saved to data.zip")
+    logger.info(f"Data saved to {data_name}.zip")
+    print(f"Data saved to {data_name}.zip")
 else:
     print(f'Error {response.status_code}: {response.text}') # otherwise print the status code and the error
     logger.error(f"API Call Error '{response.status_code}: {response.text}'")
 
 logger.info("Process Finished")
+print("Process Finished")
+
+
+
+
