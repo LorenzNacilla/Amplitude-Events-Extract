@@ -1,13 +1,15 @@
 import requests
 import os
-import zipfile
-import gzip
 import logging
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 
+# making a directory for the logs
+log_dir = "logs"
+os.makedirs(log_dir, exist_ok=True)
+
 # log filename for when the script is run
-log_filename = f"logs/amplitude_extract_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+log_filename = os.path.join(log_dir, f"amplitude_extract_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
 
 # configuration of the logs
 logging.basicConfig(
@@ -43,11 +45,18 @@ params = {
 }
 #print(params)
 
-# API url and endpoint
-url = 'https://analytics.eu.amplitude.com/api/2/export'
+# timestamp for the when the script it is run
+timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+# making a directory for the data zip folders
+data_dir = "data_zip_files" 
+os.makedirs(data_dir, exist_ok=True)
 
 # variable for the data file name
-data_name = 'amplitude_data'
+data_name = os.path.join(data_dir, f"amplitude_data_{timestamp}")
+
+# API url and endpoint
+url = 'https://analytics.eu.amplitude.com/api/2/export'
 
 # calling the API
 response = requests.get(url, params=params, auth=(AMP_API_KEY, AMP_SECRET_KEY))
