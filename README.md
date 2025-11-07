@@ -4,7 +4,7 @@ This repo looks into extracting events data from the Amplitude API. There were t
 
 ## ➡️ General Data Flow
 ![General Flow](https://github.com/LorenzNacilla/Amplitude-Events-Extract/blob/main/images/General%20Flow.png)
-This is a general flow of 
+This is a general flow of the project. For the time being this is looking at more
 
 ![Airbyte Flow](https://github.com/LorenzNacilla/Amplitude-Events-Extract/blob/main/images/Airbyte%20Flow.png)
 
