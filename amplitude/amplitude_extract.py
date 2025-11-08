@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from datetime import datetime, timedelta
 
 # making a directory for the logs
-log_dir = "logs"
+log_dir = "extract_logs"
 os.makedirs(log_dir, exist_ok=True)
 
 # log filename for when the script is run
@@ -30,7 +30,7 @@ AMP_API_KEY = os.getenv('AMP_API_KEY')
 AMP_SECRET_KEY = os.getenv('AMP_SECRET_KEY')
 
 # setting a start date for our events data can go back x amoubnt of days starting midnight
-days_back = 3
+days_back = 4
 start_date = datetime.now() - timedelta(days = days_back)
 start_date = start_date.strftime('%Y%m%dT00')
 
