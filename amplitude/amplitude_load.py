@@ -34,13 +34,14 @@ logger = logging.getLogger()
 print("Starting amplitude processing...")
 
 # finding all zip files in my data_zip_files directory
+amplitude_load_files = [] # starting an empty list for the loop append
 try:
-    amplitude_load_files = [f for f in os.listdir(data_dir)
-                            if f.endswith(".zip")
-                            and os.path.isfile(os.path.join(data_dir, f))]
+    all_data_zip_files = os.listdir(data_dir)
+    for f in all_data_zip_files:
+        if f.endswith(".zip") and os.path.isfile(os.path.join(data_dir, f)): # check if it ends in a zip file and IT is a file
+            amplitude_load_files.append(f) # then add it to the empty list
 except Exception as e:
     logger.error(f"Could not read data directory {data_dir}: {e}")
-    amplitude_load_files = []
 
 if not amplitude_load_files:
     logger.info("No new .zip files found to process.")
