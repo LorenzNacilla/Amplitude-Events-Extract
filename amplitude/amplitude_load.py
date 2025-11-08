@@ -3,13 +3,14 @@ import zipfile
 import gzip
 import logging
 import shutil
+import tempfile
 from datetime import datetime
 
 # variables for directories 
 log_dir = "load_logs" # load logs
 data_dir = "data_zip_files" # same directory for where the amplitude zip data is dropped
 unzipped_dir = "unzipped_data" # where the jsons go
-archive_dir = os.path.join(data_dir, "archive") # where zips are moved after processing
+archive_dir = "archive" # where zips are moved after processing
 
 # make the directories
 os.makedirs(log_dir, exist_ok=True)
@@ -29,3 +30,20 @@ logging.basicConfig(
     filename=log_filename
 )
 logger = logging.getLogger()
+
+print("Starting amplitude processing...")
+
+# finding all zip files in my data_zip_files directory
+try:
+    amplitude_load_files = [f for f in os.listdir(data_dir)
+                            if f.endswith(".zip")
+                            and os.path.isfile(os.path.join(data_dir, f))]
+except Exception as e:
+    logger.error(f"Could not read data directory {data_dir}: {e}")
+    amplitude_load_files = []
+
+if not amplitude_load_files:
+    logger.info("No new .zip files found to process.")
+    print("No new .zip files found to process.")
+else:
+    logger.info(f"There are {len(amplitude_load_files)} to process")
