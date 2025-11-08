@@ -7,9 +7,9 @@ from datetime import datetime
 
 # variables for directories 
 log_dir = "load_logs" # load logs
-data_dir = "data_zip_files" # directory for where the amplitude zip data is dropped
+data_dir = "data_zip_files" # same directory for where the amplitude zip data is dropped
 unzipped_dir = "unzipped_data" # where the jsons go
-archive_dir = os.path.join(data_dir, "archive") # 
+archive_dir = os.path.join(data_dir, "archive") # where zips are moved after processing
 
 # make the directories
 os.makedirs(log_dir, exist_ok=True)
