@@ -34,25 +34,25 @@ logger = logging.getLogger()
 print("Starting amplitude data processing...")
 
 # finding all zip files in my data_zip_files directory
-amplitude_load_files = [] # starting an empty list for the loop append
+amplitude_zip_process_files = [] # starting an empty list for the loop append
 try:
     all_data_zip_files = os.listdir(data_dir)
     for f in all_data_zip_files:
         if f.endswith(".zip") and os.path.isfile(os.path.join(data_dir, f)): # check if it ends in a zip file and IT is a file
-            amplitude_load_files.append(f) # then add it to the empty list
+            amplitude_zip_process_files.append(f) # then add it to the empty list
 except Exception as e:
     logger.error(f"Could not read data directory {data_dir}: {e}")
 
-if not amplitude_load_files:
+if not amplitude_zip_process_files:
     logger.info("No new .zip files found to process.")
 else:
-    if len(amplitude_load_files) == 1:
+    if len(amplitude_zip_process_files) == 1:
         logger.info("There is 1 file to process")
     else:
-        logger.info(f"There are {len(amplitude_load_files)} files to process")
+        logger.info(f"There are {len(amplitude_zip_process_files)} files to process")
 
 # looping through each data zip file and processing it
-for data_zip_name in amplitude_load_files:
+for data_zip_name in amplitude_zip_process_files:
     data_zip_path = os.path.join(data_dir, data_zip_name)
     logger.info(f"Processing {data_zip_name}...")
 
@@ -112,7 +112,7 @@ for data_zip_name in amplitude_load_files:
         except Exception as e:
             logger.info(f"Failed to delete temp directory {temp_dir}: {e}")
 
-logger.info("Load script is finished")
-print("Load script is finished")
+logger.info("Processing script is finished")
+print("Processing script is finished")
 
         
