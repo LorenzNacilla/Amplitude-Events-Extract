@@ -47,9 +47,9 @@ if not amplitude_zip_process_files:
     logger.info("No new .zip files found to process.")
 else:
     if len(amplitude_zip_process_files) == 1:
-        logger.info("There is 1 file to process")
+        logger.info("There is 1 zip file to process")
     else:
-        logger.info(f"There are {len(amplitude_zip_process_files)} files to process")
+        logger.info(f"There are {len(amplitude_zip_process_files)} zip files to process")
 
 # looping through each data zip file and processing it
 for data_zip_name in amplitude_zip_process_files:
