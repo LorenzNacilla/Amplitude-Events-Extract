@@ -30,7 +30,7 @@ AMP_API_KEY = os.getenv('AMP_API_KEY')
 AMP_SECRET_KEY = os.getenv('AMP_SECRET_KEY')
 
 # setting a start date for our events data can go back x amoubnt of days starting midnight
-days_back = 4
+days_back = 1
 start_date = datetime.now() - timedelta(days = days_back)
 start_date = start_date.strftime('%Y%m%dT00')
 
