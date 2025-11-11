@@ -61,8 +61,8 @@ else:
     else:
         logger.info(f"There are {len(files_to_upload)} json files to upload")
     
-    for filename in files_to_upload:
-        local_file_path = os.path.join(unzipped_dir, filename) # full local file path
+    for filename in files_to_upload: # go through any new .json files
+        local_file_path = os.path.join(unzipped_dir, filename) # full local file path to be read
         archive_file_path = os.path.join(archive_dir, filename) # archive file path
 
         # s3filename = f"raw_data/amplitude/{filename}"
