@@ -20,8 +20,8 @@ logs_dir = "s3_upload_logs"
 archive_dir = "archived_json_data"
 
 # making directories
-os.mkdir(logs_dir, exist_ok = True)
-os.mkdir(archive_dir, exist_ok = True)
+os.makedirs(logs_dir, exist_ok = True)
+os.makedirs(archive_dir, exist_ok = True)
 
 # timestamp variable
 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -65,15 +65,16 @@ else:
         local_file_path = os.path.join(unzipped_dir, filename) # full local file path
         archive_file_path = os.path.join(archive_dir, filename) # archive file path
 
-        s3filename = f"raw_data/amplitude/{filename}"
+        # s3filename = f"raw_data/amplitude/{filename}"
+        aws_file_destination = "python-import/" + filename
 
         try:
             s3_client.upload_file(
-                filename = local_file_path
-                , bucket = bucket_name
-                , s3filename = s3filename
+                local_file_path
+                , bucket_name
+                , aws_file_destination
             )
-            logger.info(f"Uploaded {local_file_path} to s3://{bucket_name}/{s3filename}")
+            logger.info(f"Uploaded {local_file_path} to s3://{bucket_name}/{aws_file_destination}")
 
             os.rename(local_file_path, archive_file_path)
             logger.info(f"Archived {local_file_path}, to {archive_file_path}")
