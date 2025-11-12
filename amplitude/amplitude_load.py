@@ -17,11 +17,11 @@ unzipped_dir = 'unzipped_data'
 
 # directory variables
 logs_dir = "s3_upload_logs"
-archive_dir = "archived_json_data"
+##### archive_dir = "archived_json_data"
 
 # making directories
 os.makedirs(logs_dir, exist_ok = True)
-os.makedirs(archive_dir, exist_ok = True)
+##### os.makedirs(archive_dir, exist_ok = True)
 
 # timestamp variable
 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -44,6 +44,7 @@ s3_client = boto3.client(
 )
 
 # go through my unzipped_data directory and look for any .json files
+print("Beginning s3 upload")
 files_to_upload = []
 try:
     all_data_files = os.listdir(unzipped_dir)
@@ -63,7 +64,7 @@ else:
     
     for filename in files_to_upload: # go through any new .json files
         local_file_path = os.path.join(unzipped_dir, filename) # full local file path to be read
-        archive_file_path = os.path.join(archive_dir, filename) # archive file path
+        #### archive_file_path = os.path.join(archive_dir, filename) # archive file path
 
         # s3filename = f"raw_data/amplitude/{filename}"
         aws_file_destination = "python-import/" + filename
@@ -76,12 +77,13 @@ else:
             )
             logger.info(f"Uploaded {local_file_path} to s3://{bucket_name}/{aws_file_destination}")
 
-            os.rename(local_file_path, archive_file_path)
-            logger.info(f"Archived {local_file_path}, to {archive_file_path}")
+            os.remove(local_file_path)
+            logger.info(f"Removed file: {local_file_path}")
 
         except Exception as e:
-            logger.error(f"Failed during upload/archive for {local_file_path}: {e}")
+            logger.error(f"Failed during upload/removal for {local_file_path}: {e}")
 
     logger.info("s3 upload finished.")
+    print("s3 upload finished.")
 
             
