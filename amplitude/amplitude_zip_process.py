@@ -85,11 +85,11 @@ for data_zip_name in amplitude_zip_process_files:
                 if file.endswith(".gz"):
                     gz_path = os.path.join(root, file)
 
-                    zip_base_name = data_zip_name.replace('amplitude_data_', '').replace('.zip', '')
+                    # zip_base_name = data_zip_name.replace('amplitude_data_', '').replace('.zip', '')
                     json_base_name = file.replace('.gz', '')
 
-                    final_json_name = f"{zip_base_name}_{json_base_name}"
-                    final_json_path = os.path.join(unzipped_dir, final_json_name)
+                    # final_json_name = f"{zip_base_name}_{json_base_name}"
+                    final_json_path = os.path.join(unzipped_dir, json_base_name)
 
                     logger.info(f"Decompressing {file} to {final_json_path}")
 
