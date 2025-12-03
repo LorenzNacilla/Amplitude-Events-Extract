@@ -1,5 +1,8 @@
+# Overview
+
 This repo looks into extracting events data from the Amplitude API. There were two methods in calling the API - one using airbyte to call the API itself and then landing it in an azure blob storage, and the other with a python script. This repo mainly contains the python script to call the API but the method with airbyte and azure blob storage is used.
 
+- [Overview](#overview)
 - [➡️ General Data Flow](#️-general-data-flow)
 - [Requirements](#requirements)
 - [1. Extraction and Unzipping](#1-extraction-and-unzipping)
@@ -277,6 +280,8 @@ acts as a final part of cold storage. Some additions would require removing the 
 This section entails of taking the json files after being unzipped into an s3 bucket. First the creation and configuration of the s3 bucket was done first and then from there was able to load all of the data into it.
 
 ## AWS s3 Bucket Set-up
+
+![AWS s3 bucket Setup](https://github.com/LorenzNacilla/Amplitude-Events-Extract/blob/main/images/AWS%20s3%20bucket%20bucket20%Setup.png)
 
 ## Snowflake Storage Integration and Staging
 
