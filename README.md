@@ -281,7 +281,12 @@ This section entails of taking the json files after being unzipped into an s3 bu
 
 ## AWS s3 Bucket Set-up
 
-<insert image here>
+![AWS s3 bucket Setup](https://github.com/LorenzNacilla/Amplitude-Events-Extract/blob/main/images/AWS%20s3%20bucket%20Setup.png)
+This diagram overall highlights the set up of the s3 bucket:
+- Created the KMS (Key Management Service) key which contains the ARN (Amazon Resource Name) and is used in creation of the s3 bucket.
+- Created the s3 bucket and ensuring that public access is blocked, as well that it is encrypted using the ARN from the KMS key as mentioned above.
+- An IAM (Identity and Access Management) policy was created which set privileges to our s3 buckket (e.g. Read/Write to Bucket).
+- 
 
 ## Snowflake Storage Integration and Staging
 
