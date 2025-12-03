@@ -286,7 +286,8 @@ This diagram overall highlights the set up of the s3 bucket:
 - Created the KMS (Key Management Service) key which contains the ARN (Amazon Resource Name) and is used in creation of the s3 bucket.
 - Created the s3 bucket and ensuring that public access is blocked, as well that it is encrypted using the ARN from the KMS key as mentioned above.
 - An IAM (Identity and Access Management) policy was created which set privileges to our s3 buckket (e.g. Read/Write to Bucket).
-- 
+- A user was created where the created policy above is attached to it. As a result of creaitng the user, I was able to get the access key and secret key from it which essentially acts as authentication to use the bucket - allowing to put data in the bucket.
+- A role was also created and the same policy is attached to it as well. Difference between the user created and the role is that the role allows us to be able to put the data into snowflake from s3.
 
 ## Snowflake Storage Integration and Staging
 
