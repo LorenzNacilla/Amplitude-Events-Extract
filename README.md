@@ -281,7 +281,7 @@ This section entails of taking the json files after being unzipped into an s3 bu
 
 ## AWS s3 Bucket Set-up
 
-![AWS s3 bucket Setup](https://github.com/LorenzNacilla/Amplitude-Events-Extract/blob/main/images/AWS%20s3%20bucket%20bucket20%Setup.png)
+<insert image here>
 
 ## Snowflake Storage Integration and Staging
 
