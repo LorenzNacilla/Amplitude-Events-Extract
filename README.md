@@ -289,10 +289,10 @@ This diagram overall highlights the set up of the s3 bucket:
 - A user was created where the created policy above is attached to it. As a result of creaitng the user, I was able to get the access key and secret key from it which essentially acts as authentication to use the bucket - allowing to put data in the bucket.
 - A role was also created and the same policy is attached to it as well. Difference between the user created and the role is that the role allows us to be able to put the data into snowflake from s3.
 
-## Snowflake Storage Integration and Staging
+## Snowflake Storage Integration, Stages, and Snowpipes
 
 ![Snowflake Storage Integration and Staging](https://github.com/LorenzNacilla/Amplitude-Events-Extract/blob/main/images/Snowflake%20Storage%20Integration%20and%20Staging.png)
-Now that the s3 bucket and any AWS configurations have been set up, the next phase is to create a snowflake storage integration and then stages. The storage integration is what handles the authentication between the s3 bucket and AWS configurations we set up earlier. The stage(s) on the other hand is what reads the data from a specific point/folder within the bucket, so it picks up data from there only rather getting everything from the bucket (unless you have no further folders/sub-directories in your bucket).
+Now that the s3 bucket and any AWS configurations have been set up, the next phase is to create a snowflake storage integration and then stages. The storage integration is what handles the authentication between the s3 bucket and AWS configurations we set up earlier. The stage(s) on the other hand is what reads the data from a specific point/folder within the bucket, so it picks up data from there only rather than getting everything from the bucket (unless you have no further folders/sub-directories in your bucket).
 
 The syntax below is what was used to create the storage integration:
 ```snowflake
@@ -303,6 +303,14 @@ CREATE OR REPLACE STORAGE INTEGRATION <insert storage integration name>
   STORAGE_AWS_ROLE_ARN = '<insert arn>'
   STORAGE_ALLOWED_LOCATIONS = ('<insert bucket name>');
 ```
+
+Then by running
+```snowflake
+DESC INTEGRATION <snowflake storage integration name>;
+```
+Find the details for ```STORAGE_AWS_IAM_USER_ARN``` and ```EXTERNAL_ID```, then go back to your IAM role and edit the trust policy by replacing the ARN and External ID there. After doing so, we should be able to move on to creating our stages.
+
+
 
 ## Python Load into s3
 
