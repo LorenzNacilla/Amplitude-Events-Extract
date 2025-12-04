@@ -291,6 +291,19 @@ This diagram overall highlights the set up of the s3 bucket:
 
 ## Snowflake Storage Integration and Staging
 
+
+Now that the s3 bucket and any AWS configurations have been set up, the next phase is to create a snowflake storage integration and then stages. 
+
+The syntax below is what was used to create the storage integration:
+```snowflake
+CREATE OR REPLACE STORAGE INTEGRATION <insert storage integration name>
+  TYPE = EXTERNAL_STAGE
+  STORAGE_PROVIDER = 'S3'
+  ENABLED = TRUE
+  STORAGE_AWS_ROLE_ARN = '<insert arn>'
+  STORAGE_ALLOWED_LOCATIONS = ('<insert bucket name>');
+```
+
 ## Python Load into s3
 
 The following script was used to load all of the unzipped json data files into the s3 bucket that was created:
