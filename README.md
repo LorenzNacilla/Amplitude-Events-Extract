@@ -445,4 +445,11 @@ First before the transformation is done, I designed a quick schema to answer som
 - What journeys are users taking on the website?
 - Can we associate the IP address of a user with a particular company, so we can see which companies are visiting the website?
 - Is a user making repeated clicks on the website?
+- Is there any evidence that a user finds the menu on the UK website confusing?
+
+![Amplitude Schema](https://github.com/LorenzNacilla/Amplitude-Events-Extract/blob/main/images/Amplitude%20Schema.png)
+
+The Sessions/Events table would be the facts table which tells that for every session a user is on within the website, the series of events respectively. The locations and devices table are dimensions tables. Locations being able to tell us where a user is from - allowing analysis where in the world people are viewing the website, and devices being able to find out what device people are on mainly when viewing the website but with further analysis allowing to see if any particular devices people have struggle with on the website via repeated clicks.
+
+## dbt
 
