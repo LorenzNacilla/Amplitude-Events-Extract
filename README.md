@@ -291,8 +291,8 @@ This diagram overall highlights the set up of the s3 bucket:
 
 ## Snowflake Storage Integration and Staging
 
-
-Now that the s3 bucket and any AWS configurations have been set up, the next phase is to create a snowflake storage integration and then stages. 
+![Snowflake Storage Integration and Staging](https://github.com/LorenzNacilla/Amplitude-Events-Extract/blob/main/images/Snowflake%20Storage%20Integration%20and%20Staging.png)
+Now that the s3 bucket and any AWS configurations have been set up, the next phase is to create a snowflake storage integration and then stages. The storage integration is what handles the authentication between the s3 bucket and AWS configurations we set up earlier. The stage(s) on the other hand is what reads the data from a specific point/folder within the bucket, so it picks up data from there only rather getting everything from the bucket (unless you have no further folders/sub-directories in your bucket).
 
 The syntax below is what was used to create the storage integration:
 ```snowflake
