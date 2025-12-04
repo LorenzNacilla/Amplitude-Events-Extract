@@ -295,7 +295,7 @@ This diagram overall highlights the set up of the s3 bucket:
 Now that the s3 bucket and any AWS configurations have been set up, the next phase is to create a snowflake storage integration and then stages. The storage integration is what handles the authentication between the s3 bucket and AWS configurations we set up earlier. The stage(s) on the other hand is what reads the data from a specific point/folder within the bucket, so it picks up data from there only rather than getting everything from the bucket (unless you have no further folders/sub-directories in your bucket).
 
 The syntax below is what was used to create the storage integration:
-```snowflake
+```sql
 CREATE OR REPLACE STORAGE INTEGRATION <insert storage integration name>
   TYPE = EXTERNAL_STAGE
   STORAGE_PROVIDER = 'S3'
@@ -305,12 +305,43 @@ CREATE OR REPLACE STORAGE INTEGRATION <insert storage integration name>
 ```
 
 Then by running
-```snowflake
+```sql
 DESC INTEGRATION <snowflake storage integration name>;
 ```
 Find the details for ```STORAGE_AWS_IAM_USER_ARN``` and ```EXTERNAL_ID```, then go back to your IAM role and edit the trust policy by replacing the ARN and External ID there. After doing so, we should be able to move on to creating our stages.
 
+First, a file format was created so snowflake knows what kind of data is being read into it.
+```sql
+CREATE OR REPLACE FILE FORMAT <file format name>
+TYPE = 'JSON'
+STRIP_OUTER_ARRAY = TRUE;
+```
 
+Then the stage itself was created.
+```sql
+CREATE OR REPLACE STAGE <stage name>
+STORAGE_INTEGRATION = <storage integration name>
+URL = 's3://<bucket name>/<folder name>/'
+FILE_FORMAT = <file format name>;
+```
+
+The table for the raw data itself.
+```sql
+CREATE OR REPLACE TABLE <table name> (
+  json_data VARIANT
+);
+```
+
+Then a snowpipe was made so that when there's new data in the s3 bucket, then this would then be fed straight into the table(s) made.
+```sql
+CREATE OR REPLACE PIPE <pipe name>
+AUTO_INGEST = TRUE
+AS
+COPY INTO <table name>
+FROM @<stage name>
+FILE_FORMAT = (FORMAT_NAME = <file format name>)
+ON_ERROR = 'CONTINUE';
+```
 
 ## Python Load into s3
 
