@@ -433,4 +433,16 @@ else:
     print("s3 upload finished.")
 ```
 
+With the snowpipe made before, running the script should load data into snowflake as well.
+
 # 3. Transform
+
+Now that the data has been loaded into snowflake, the next phase was to start transforming it. The transformation can be done in either snowflake or dbt.
+
+## Schema
+
+First before the transformation is done, I designed a quick schema to answer some following business questions/use cases:
+- What journeys are users taking on the website?
+- Can we associate the IP address of a user with a particular company, so we can see which companies are visiting the website?
+- Is a user making repeated clicks on the website?
+
