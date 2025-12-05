@@ -10,9 +10,11 @@ This repo looks into extracting events data from the Amplitude API. There were t
   - [JSON Unzipping](#json-unzipping)
 - [2. Load](#2-load)
   - [AWS s3 Bucket Set-up](#aws-s3-bucket-set-up)
-  - [Snowflake Storage Integration and Staging](#snowflake-storage-integration-and-staging)
+  - [Snowflake Storage Integration, Stages, and Snowpipes](#snowflake-storage-integration-stages-and-snowpipes)
   - [Python Load into s3](#python-load-into-s3)
 - [3. Transform](#3-transform)
+  - [Schema](#schema)
+  - [dbt](#dbt)
 
 # ➡️ General Data Flow
 
@@ -283,6 +285,7 @@ This section entails of taking the json files after being unzipped into an s3 bu
 
 ![AWS s3 bucket Setup](https://github.com/LorenzNacilla/Amplitude-Events-Extract/blob/main/images/AWS%20s3%20bucket%20Setup.png)
 This diagram overall highlights the set up of the s3 bucket:
+
 - Created the KMS (Key Management Service) key which contains the ARN (Amazon Resource Name) and is used in creation of the s3 bucket.
 - Created the s3 bucket and ensuring that public access is blocked, as well that it is encrypted using the ARN from the KMS key as mentioned above.
 - An IAM (Identity and Access Management) policy was created which set privileges to our s3 buckket (e.g. Read/Write to Bucket).
@@ -295,6 +298,7 @@ This diagram overall highlights the set up of the s3 bucket:
 Now that the s3 bucket and any AWS configurations have been set up, the next phase is to create a snowflake storage integration and then stages. The storage integration is what handles the authentication between the s3 bucket and AWS configurations we set up earlier. The stage(s) on the other hand is what reads the data from a specific point/folder within the bucket, so it picks up data from there only rather than getting everything from the bucket (unless you have no further folders/sub-directories in your bucket).
 
 The syntax below is what was used to create the storage integration:
+
 ```sql
 CREATE OR REPLACE STORAGE INTEGRATION <insert storage integration name>
   TYPE = EXTERNAL_STAGE
@@ -305,12 +309,15 @@ CREATE OR REPLACE STORAGE INTEGRATION <insert storage integration name>
 ```
 
 Then by running
+
 ```sql
 DESC INTEGRATION <snowflake storage integration name>;
 ```
-Find the details for ```STORAGE_AWS_IAM_USER_ARN``` and ```EXTERNAL_ID```, then go back to your IAM role and edit the trust policy by replacing the ARN and External ID there. After doing so, we should be able to move on to creating our stages.
+
+Find the details for `STORAGE_AWS_IAM_USER_ARN` and `EXTERNAL_ID`, then go back to your IAM role and edit the trust policy by replacing the ARN and External ID there. After doing so, we should be able to move on to creating our stages.
 
 First, a file format was created so snowflake knows what kind of data is being read into it.
+
 ```sql
 CREATE OR REPLACE FILE FORMAT <file format name>
 TYPE = 'JSON'
@@ -318,6 +325,7 @@ STRIP_OUTER_ARRAY = TRUE;
 ```
 
 Then the stage itself was created.
+
 ```sql
 CREATE OR REPLACE STAGE <stage name>
 STORAGE_INTEGRATION = <storage integration name>
@@ -326,6 +334,7 @@ FILE_FORMAT = <file format name>;
 ```
 
 The table for the raw data itself.
+
 ```sql
 CREATE OR REPLACE TABLE <table name> (
   json_data VARIANT
@@ -333,6 +342,7 @@ CREATE OR REPLACE TABLE <table name> (
 ```
 
 Then a snowpipe was made so that when there's new data in the s3 bucket, then this would then be fed straight into the table(s) made.
+
 ```sql
 CREATE OR REPLACE PIPE <pipe name>
 AUTO_INGEST = TRUE
@@ -442,6 +452,7 @@ Now that the data has been loaded into snowflake, the next phase was to start tr
 ## Schema
 
 First before the transformation is done, I designed a quick schema to answer some following business questions/use cases:
+
 - What journeys are users taking on the website?
 - Can we associate the IP address of a user with a particular company, so we can see which companies are visiting the website?
 - Is a user making repeated clicks on the website?
@@ -452,7 +463,9 @@ First before the transformation is done, I designed a quick schema to answer som
 The Sessions/Events table would be the facts table which tells that for every session a user is on within the website, the series of events respectively. The locations and devices table are dimensions tables. Locations being able to tell us where a user is from - allowing analysis where in the world people are viewing the website, and devices being able to find out what device people are on mainly when viewing the website but with further analysis allowing to see if any particular devices people have struggle with on the website via repeated clicks.
 
 ## dbt
+
 First part was creating the yaml file for the source data. The yml file below defines the one table as our source data:
+
 ```yaml
 version: 2
 
@@ -595,6 +608,7 @@ Then to call this macro which would essentially make my sessions/events table, I
     aggregation = 'max'
 ) }}
 ```
+
 As for the devices table, it was primarily a select statement from the staging table made earlier with only the fields to do with devices:
 
 ```sql
