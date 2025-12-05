@@ -509,7 +509,7 @@ select * from renamed
 
 ```
 
-I wanted to make the Sessions/Events fact table first. A key part of doing this was doing a lateral flatten of the event_properties nested json. This is because this nested json would give me info about the specific events a user was doing on the website for a session. The last part of the query was simply getting rid of '[Amplitude]' in any of the rows that came from the lateral flatten to tidy up as they were going to be field headers.
+I wanted to make the Sessions/Events fact table first. A key part of doing this was making a intermediate model where I did a lateral flatten of the event_properties nested json. This is because this nested json would give me info about the specific events a user was doing on the website for a session. The last part of the query was simply getting rid of '[Amplitude]' in any of the rows that came from the lateral flatten to tidy up as they were going to be field headers.
 
 ```sql
 with json_parse as (
@@ -585,4 +585,14 @@ pivot({{ aggregation }}({{ value_column }}) for {{ pivot_column }} in (
 {% endmacro %}
 ```
 
+Then to call this macro which would essentially make my sessions/events table, I would need to reference the intermediate model made from above and put in the following arguments/fields:
+
+```sql
+{{ amplitude_pivot(
+    our_model = ref('int_amplitude__lateral_flatten'),
+    pivot_column = 'key',
+    value_column = 'value',
+    aggregation = 'max'
+) }}
+```
 
