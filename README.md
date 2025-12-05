@@ -466,3 +466,45 @@ sources:
           - name: JSON_DATA
             data_type: variant
 ```
+
+Once the source was defined, I then moved on to making the staging table from the data. As the source data is a json, it was parsing out the fields I needed to answer the business questions listed above. The following sql query is what makes the staging table:
+
+```sql
+with source as (
+
+    select * from {{ source('amplitude_data', 'LORENZNACILLA_AMPLITUDE_EVENTS_RAW_PYTHON') }}
+
+),
+
+renamed as (
+
+    select
+    {{ dbt_utils.generate_surrogate_key(['json_data:session_id', 'json_data:event_id', 'json_data:amplitude_id', 'json_data:device_id']) }} as row_id
+    , json_data:session_id::INTEGER AS session_id
+    , json_data:event_id::INTEGER as event_id
+    , json_data:amplitude_id::INTEGER as amplitude_id
+    , json_data:client_upload_time::VARCHAR as client_upload_time
+    , json_data:device_id::VARCHAR as device_id
+    , json_data:device_brand::VARCHAR as device_brand
+    , json_data:device_carrier::VARCHAR as device_carrier
+    , json_data:device_family::VARCHAR as device_family
+    , json_data:device_manufacturer::VARCHAR as device_manufacturer
+    , json_data:device_model::VARCHAR as device_model
+    , json_data: device_type::VARCHAR as device_type
+    , json_data:user_id::VARCHAR as user_id
+    , json_data:event_properties::VARIANT as event_properties
+    , json_data:event_time::VARCHAR as event_time
+    , json_data:event_type:VARCHAR as event_type
+    , json_data:country::VARCHAR as country
+    , json_data:region::VARCHAR as region
+    , json_data:ip_address::VARCHAR as ip_address
+    , json_data:location_lat::VARCHAR as location_lat
+    , json_data:location_lng::VARCHAR as location_lng
+
+    from source
+
+)
+
+select * from renamed
+
+```
