@@ -595,4 +595,50 @@ Then to call this macro which would essentially make my sessions/events table, I
     aggregation = 'max'
 ) }}
 ```
+As for the devices table, it was primarily a select statement from the staging table made earlier with only the fields to do with devices:
 
+```sql
+#with json_parse as (
+    select *
+    from {{ ref('stg_amplitude__json_parse') }}
+),
+
+devices as (
+select
+    row_id
+    , device_id
+    , device_brand
+    , device_carrier
+    , device_family
+    , device_manufacturer
+    , device_model
+    , device_type
+from json_parse
+)
+
+select * from devices
+```
+
+The same logic applies for the locations table as well:
+
+```sql
+with json_parse as (
+    select *
+    from {{ ref('stg_amplitude__json_parse') }}
+),
+
+locations as (
+select
+    row_id
+    , country
+    , region
+    , {{ dbt_utils.generate_surrogate_key(['ip_address']) }} as ip_address
+    , location_lat
+    , location_lng
+from json_parse
+)
+
+select * from locations
+```
+
+To keep the actual value of the ip_address more private/discreet, I used the generate_surrogate_key from the dbt_utils package which essentially hashes each ip_address/row value.
