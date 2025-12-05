@@ -508,3 +508,81 @@ renamed as (
 select * from renamed
 
 ```
+
+I wanted to make the Sessions/Events fact table first. A key part of doing this was doing a lateral flatten of the event_properties nested json. This is because this nested json would give me info about the specific events a user was doing on the website for a session. The last part of the query was simply getting rid of '[Amplitude]' in any of the rows that came from the lateral flatten to tidy up as they were going to be field headers.
+
+```sql
+with json_parse as (
+    select *
+    from {{ ref('stg_amplitude__json_parse') }}
+),
+
+lateral_flatten as (
+select
+    row_id
+    , session_id
+    , event_id
+    , amplitude_id
+    , device_id
+    , user_id
+    , client_upload_time
+    , event_time
+    , event_type
+    , replace(key::STRING, '[Amplitude] ', '') as key
+    , value::STRING as value
+from json_parse,
+lateral flatten(input => event_properties)
+)
+
+select
+    jp.row_id
+    , jp.session_id
+    , jp.event_id
+    , jp.amplitude_id
+    , jp.device_id
+    , jp.user_id
+    , jp.client_upload_time
+    , jp.event_time
+    , jp.event_type
+    , replace(lf.key::STRING, '[Amplitude] ', '') as key
+    , lf.value::STRING as value
+from lateral_flatten as lf
+left join json_parse as jp
+     on lf.row_id = jp.row_id
+
+
+```
+
+There are many headers in the key field to pivot as field headers. My solution was creating a dynamic pivot macro so I would not have to manually type the out values I needed to pivot. The following jinja sql code is the dynamic pivot:
+
+```sql
+{% macro amplitude_pivot(our_model, pivot_column, value_column, aggregation='max') %}
+
+{%- set query -%}
+    select distinct {{ pivot_column }}
+    from {{ our_model }}
+    where {{ pivot_column }} is not null
+    order by {{ pivot_column }}
+{%- endset -%}
+
+{%- set results = run_query(query) -%}
+
+{%- if execute -%}
+    {%- set pivot_values = results.columns[0].values() -%}
+{%- else -%}
+    {%- set pivot_values = [] -%}
+{%- endif -%}
+
+select *
+from {{ our_model }}
+pivot({{ aggregation }}({{ value_column }}) for {{ pivot_column }} in (
+    {%- for value in pivot_values %}
+        '{{ value }}' as {{ value | replace(' ', '_') | replace('-', '_') | replace('(', '') | replace(')', '') | replace('.', '_') | lower }}
+        {%- if not loop.last %},{% endif -%}
+    {% endfor %}
+))
+
+{% endmacro %}
+```
+
+
