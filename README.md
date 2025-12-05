@@ -452,4 +452,17 @@ First before the transformation is done, I designed a quick schema to answer som
 The Sessions/Events table would be the facts table which tells that for every session a user is on within the website, the series of events respectively. The locations and devices table are dimensions tables. Locations being able to tell us where a user is from - allowing analysis where in the world people are viewing the website, and devices being able to find out what device people are on mainly when viewing the website but with further analysis allowing to see if any particular devices people have struggle with on the website via repeated clicks.
 
 ## dbt
+First part was creating the yaml file for the source data. The yml file below defines the one table as our source data:
+```yaml
+version: 2
 
+sources:
+  - name: amplitude_data
+    database: TIL_DATA_ENGINEERING
+    schema: LORENZNACILLA_STAGING
+    tables:
+      - name: LORENZNACILLA_AMPLITUDE_EVENTS_RAW_PYTHON
+        columns:
+          - name: JSON_DATA
+            data_type: variant
+```
